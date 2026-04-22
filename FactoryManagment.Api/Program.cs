@@ -1,3 +1,5 @@
+using FactoryManagment.Infrastructure;
+
 using FactoryManagment.Application.Abstractions.Interfaces;
 using FactoryManagment.Application.Services;
 using FactoryManagment.Infrastructure.Persistence;
@@ -25,6 +27,10 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     ));
 
 var app = builder.Build();
+
+builder.Services.AddDependencies(builder.Configuration);
+
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
