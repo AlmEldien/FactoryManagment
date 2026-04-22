@@ -1,6 +1,4 @@
-using FactoryManagment.Api.Extensions;
-using FactoryManagment.Api.Middleware;
-using Serilog;
+using FactoryManagment.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +9,10 @@ builder.Host.UseSerilog((context, configuration) =>
 );
 
 var app = builder.Build();
+
+builder.Services.AddDependencies(builder.Configuration);
+
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
