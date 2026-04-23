@@ -1,10 +1,9 @@
-using FactoryManagment.Api.Middleware;
 using FactoryManagment.Infrastructure;
-
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDependencies(builder.Configuration);
+builder.Services.AddApplication();
 
 var app = builder.Build();
 
@@ -13,11 +12,7 @@ if (app.Environment.IsDevelopment())
 {
 }
 
-
-
 app.UseHttpsRedirection();
-
-app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.UseAuthentication();
 app.UseAuthorization();

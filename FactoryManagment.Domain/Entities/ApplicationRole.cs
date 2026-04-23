@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
-
-namespace FactoryManagment.Infrastructure.Identity;
+namespace FactoryManagment.Domain.Entities;
 
 public class ApplicationRole : IdentityRole
 {

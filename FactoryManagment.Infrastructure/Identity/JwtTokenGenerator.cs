@@ -1,10 +1,8 @@
 using FactoryManagment.Application.Abstractions.Identity;
-using FactoryManagment.Domain.Entities;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 
@@ -43,11 +41,5 @@ public class JwtTokenGenerator(IOptions<JwtSettings> jwtOptions) : IJwtTokenGene
 
         var token = tokenHandler.CreateToken(tokenDescriptor);
         return tokenHandler.WriteToken(token);
-    }
-
-    public RefreshToken GenerateRefreshToken()
-    {
-        var token = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64));
-        return new RefreshToken(token, DateTime.UtcNow.AddDays(_jwtSettings.RefreshTokenExpiryDays), DateTime.UtcNow);
     }
 }

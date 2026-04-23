@@ -1,4 +1,4 @@
-namespace FactoryManagment.Application.Features.Auth.Dtos;
+namespace FactoryManagment.Application.Dtos;
 
 public record AuthResponse(
     string Id,
@@ -7,7 +7,5 @@ public record AuthResponse(
     string UserName,
     string Email,
     string Token,
-    int ExpiresIn,
-    string RefreshToken,
-    DateTime RefreshTokenExpiration
+    int ExpiresIn
 );

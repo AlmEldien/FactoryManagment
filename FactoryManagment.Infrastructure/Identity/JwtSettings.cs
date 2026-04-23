@@ -17,7 +17,4 @@ public class JwtSettings
 
     [Range(1, int.MaxValue)]
     public int ExpiryMinutes { get; set; }
-
-    [Range(1, int.MaxValue)]
-    public int RefreshTokenExpiryDays { get; set; }
 }

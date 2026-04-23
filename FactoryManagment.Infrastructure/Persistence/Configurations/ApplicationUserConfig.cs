@@ -1,4 +1,5 @@
-using FactoryManagment.Infrastructure.Identity;
+
+using FactoryManagment.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -11,13 +12,5 @@ public class ApplicationUserConfig : IEntityTypeConfiguration<ApplicationUser>
         builder.Property(x => x.FirstName).HasMaxLength(100);
         builder.Property(x => x.LastName).HasMaxLength(100);
         builder.Ignore(x => x.FullName);
-
-        builder.OwnsMany(x => x.RefreshTokens, tb =>
-        {
-            tb.ToTable("RefreshTokens");
-            tb.WithOwner().HasForeignKey("UserId");
-            tb.HasKey("UserId", "Token");
-            tb.Property(r => r.Token).HasMaxLength(256);
-        });
     }
 }
