@@ -1,4 +1,8 @@
-﻿using FactoryManagment.Infrastructure.Persistence;
+using FactoryManagment.Application.Abstractions.Repositories;
+using FactoryManagment.Application.Abstractions.Services;
+using FactoryManagment.Application.Services;
+using FactoryManagment.Infrastructure.Persistence;
+using FactoryManagment.Infrastructure.Persistence.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,17 +17,27 @@ namespace FactoryManagment.Infrastructure
 
             services.AddCors(options =>
                 options.AddDefaultPolicy(builder =>
-                    builder
-                        .AllowAnyMethod()
-                        .AllowAnyHeader()
-                        .WithOrigins(configuration.GetSection("AllowedOrgins").Get<string[]>()!)
-                )
+                {
+                    var origins = configuration.GetSection("AllowedOrigins").Get<string[]>();
+                    if (origins != null && origins.Length > 0)
+                        builder.WithOrigins(origins);
+                    else
+                        builder.AllowAnyOrigin();
+
+                    builder.AllowAnyMethod().AllowAnyHeader();
+                })
              );
 
-
             services.AddDbContext<ApplicationDbContext>(c => c.UseSqlServer(configuration.GetConnectionString("sqlConnection")));
+
+            // Repositories
+            services.AddScoped<IAlertRepository, AlertRepository>();
+
+            // Services
+            services.AddScoped<IAlertService, AlertService>();
 
             return services;
         }
     }
 }
+
