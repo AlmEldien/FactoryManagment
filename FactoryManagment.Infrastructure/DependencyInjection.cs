@@ -6,7 +6,6 @@ using FactoryManagment.Application.Services;
 using FactoryManagment.Domain.Entities;
 using FactoryManagment.Infrastructure.Identity;
 using FactoryManagment.Infrastructure.Persistence;
-using FactoryManagment.Infrastructure.Persistence.Repositories;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -39,11 +38,9 @@ namespace FactoryManagment.Infrastructure
             services.AddIdentityCore<ApplicationUser>(options =>
             {
                 options.Password.RequiredLength = 8;
-                // TODO: who make 'register' end point must confirm email before login
-                //options.SignIn.RequireConfirmedEmail = true;
-                options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_";
                 options.User.RequireUniqueEmail = true;
             })
+            .AddRoles<IdentityRole>()
             .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddDefaultTokenProviders();
 
