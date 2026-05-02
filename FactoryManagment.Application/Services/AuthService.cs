@@ -26,15 +26,12 @@ public class AuthService : IAuthService
 
         var roles = await _userRepository.GetRolesAsync(user.Id);
 
-        var token = _jwtTokenGenerator.GenerateToken(user.Id, user.Email!, user.FirstName, user.LastName, roles, out var expiresIn);
+        var TokenResult = _jwtTokenGenerator.GenerateToken( user.Email!, user.FirstName, user.LastName, roles);
 
         return new AuthResponse(
-            user.Id,
             user.FirstName,
             user.LastName,
-            user.UserName!,
-            user.Email!,
-            token,
-            expiresIn);
+            TokenResult.Token,
+            TokenResult.ExpiresIn);
     }
 }

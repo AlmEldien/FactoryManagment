@@ -36,7 +36,7 @@ namespace FactoryManagment.Infrastructure
             services.AddDbContext<ApplicationDbContext>(c => c.UseSqlServer(configuration.GetConnectionString("sqlConnection")));
 
             // Identity
-            services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
+            services.AddIdentityCore<ApplicationUser>(options =>
             {
                 options.Password.RequiredLength = 8;
                 // TODO: who make 'register' end point must confirm email before login
@@ -47,7 +47,7 @@ namespace FactoryManagment.Infrastructure
             .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddDefaultTokenProviders();
 
-            services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
+
             services.AddScoped<IUserRepository, UserRepository>();
 
 

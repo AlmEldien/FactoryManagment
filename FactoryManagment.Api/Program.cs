@@ -3,7 +3,6 @@ using FactoryManagment.Infrastructure;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDependencies(builder.Configuration);
-builder.Services.AddApplication();
 
 var app = builder.Build();
 
