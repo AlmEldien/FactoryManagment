@@ -16,10 +16,10 @@ public class AuthService : IAuthService
         _jwtTokenGenerator = jwtTokenGenerator;
     }
 
-    public async Task<AuthResponse?> LoginAsync(string email, string password, CancellationToken cancellationToken = default)
+    public async Task<AuthResponse?> LoginAsync(LoginDto dto, CancellationToken cancellationToken = default)
     {
-        var user = await _userRepository.GetUserByEmailAsync(email);
-        if (user == null || !await _userRepository.CheckPasswordAsync(user.Id, password))
+        var user = await _userRepository.GetUserByEmailAsync(dto.Email);
+        if (user == null || !await _userRepository.CheckPasswordAsync(user.Id, dto.Password))
         {
             return null;
         }
@@ -34,4 +34,38 @@ public class AuthService : IAuthService
             TokenResult.Token,
             TokenResult.ExpiresIn);
     }
+
+    public async Task<AuthRegisterResult> RegisterAsync(RegisterDto dto, CancellationToken cancellationToken = default)
+    {
+        var email = dto.Email.Trim().ToLowerInvariant();
+
+        var existingUser = await _userRepository.GetUserByEmailAsync(email);
+        if (existingUser != null)
+            return new AuthRegisterResult(null, ["User already exists"]);
+
+        if (dto.Password != dto.ConfirmPassword)
+            return new AuthRegisterResult(null, ["Passwords do not match"]);
+
+        var (user, createErrors) = await _userRepository.CreateUserAsync(dto, cancellationToken);
+        if (user == null || createErrors is { Count: > 0 })
+            return new AuthRegisterResult(null, createErrors);
+
+        var roles = await _userRepository.GetRolesAsync(user.Id);
+
+        var tokenResult = _jwtTokenGenerator.GenerateToken(
+            user.Email!,
+            user.FirstName,
+            user.LastName,
+            roles);
+
+        var response = new AuthResponse(
+            user.FirstName,
+            user.LastName,
+            tokenResult.Token,
+            tokenResult.ExpiresIn);
+
+        return new AuthRegisterResult(response, null);
+    }
+
+
 }

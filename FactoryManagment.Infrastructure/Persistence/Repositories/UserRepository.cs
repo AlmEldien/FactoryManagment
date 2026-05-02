@@ -1,28 +1,75 @@
 using FactoryManagment.Application.Abstractions.Repositories;
+using FactoryManagment.Application.Dtos;
 using FactoryManagment.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 
-namespace FactoryManagment.Infrastructure.Persistence.Repositories;
 
-public class UserRepository(UserManager<ApplicationUser> userManager) : IUserRepository
+public class UserRepository : IUserRepository
 {
+    private readonly UserManager<ApplicationUser> _userManager;
+
+    public UserRepository(UserManager<ApplicationUser> userManager)
+    {
+        _userManager = userManager;
+    }
+
     public async Task<ApplicationUser?> GetUserByEmailAsync(string email)
     {
-        var appUser = await userManager.FindByEmailAsync(email);
-        return appUser != null ? appUser : null;
+        return await _userManager.FindByEmailAsync(email);
     }
 
     public async Task<bool> CheckPasswordAsync(string userId, string password)
     {
-        var appUser = await userManager.FindByIdAsync(userId);
-        if (appUser == null) return false;
-        return await userManager.CheckPasswordAsync(appUser, password);
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user == null) return false;
+
+        return await _userManager.CheckPasswordAsync(user, password);
     }
 
     public async Task<IEnumerable<string>> GetRolesAsync(string userId)
     {
-        var appUser = await userManager.FindByIdAsync(userId);
-        if (appUser == null) return Enumerable.Empty<string>();
-        return await userManager.GetRolesAsync(appUser);
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user == null) return Enumerable.Empty<string>();
+
+        return await _userManager.GetRolesAsync(user);
+    }
+
+    public async Task<(ApplicationUser? User, IReadOnlyList<string>? Errors)> CreateUserAsync(RegisterDto dto, CancellationToken cancellationToken = default)
+    {
+        var email = dto.Email.Trim().ToLowerInvariant();
+
+        var user = new ApplicationUser
+        {
+            UserName = email,
+            Email = email,
+            FirstName = dto.FirstName,
+            LastName = dto.LastName
+        };
+
+        var result = await _userManager.CreateAsync(user, dto.Password);
+
+        if (!result.Succeeded)
+        {
+            var errors = result.Errors.Select(e => e.Description).ToList();
+            return (null, errors);
+        }
+
+        return (user, null);
+    }
+
+    public async Task AddToRoleAsync(string userId, string role)
+    {
+        var user = await _userManager.FindByIdAsync(userId);
+
+        if (user == null)
+            throw new Exception("User not found");
+
+        var result = await _userManager.AddToRoleAsync(user, role);
+
+        if (!result.Succeeded)
+        {
+            var errors = string.Join(", ", result.Errors.Select(e => e.Description));
+            throw new Exception(errors);
+        }
     }
 }
