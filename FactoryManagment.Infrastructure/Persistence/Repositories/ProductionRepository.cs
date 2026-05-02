@@ -1,10 +1,9 @@
-﻿using FactoryManagment.Application.Interfaces;
+﻿using FactoryManagment.Application.Abstractions.Repositories;
 using FactoryManagment.Domain.Entities;
 using FactoryManagment.Domain.Enums;
-using FactoryManagment.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
-namespace FactoryManagment.Infrastructure.Repositories;
+namespace FactoryManagment.Infrastructure.Persistence.Repositories;
 
 internal class ProductionRepository : IProductionRepository
 {

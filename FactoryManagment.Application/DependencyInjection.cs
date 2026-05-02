@@ -1,4 +1,4 @@
-﻿using FactoryManagment.Application.Interfaces;
+﻿using FactoryManagment.Application.Abstractions.Services;
 using FactoryManagment.Application.Services;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;

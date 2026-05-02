@@ -1,21 +1,19 @@
-﻿using FactoryManagment.Application.DTOs;
-using FactoryManagment.Application.Interfaces;
+﻿using FactoryManagment.Application.Abstractions.Repositories;
+using FactoryManagment.Application.Abstractions.Services;
+using FactoryManagment.Application.DTOs;
 using FactoryManagment.Domain.Entities;
 using FactoryManagment.Domain.Enums;
-using Microsoft.Extensions.Logging;
 
 namespace FactoryManagment.Application.Services;
 
 public class DashboardService : IDashboardService
 {
-    private readonly IProductionRepository     _repo;
-    private readonly ILogger<DashboardService> _logger;
+    private readonly IProductionRepository _repo;
 
 
-    public DashboardService(IProductionRepository repo, ILogger<DashboardService> logger)
+    public DashboardService(IProductionRepository repo)
     {
         _repo   = repo;
-        _logger = logger;
     }
 
 
@@ -26,17 +24,11 @@ public class DashboardService : IDashboardService
     /// <param name="end">Period end — cannot be in the future.</param>
     public async Task<DashboardKpiDto> GetDashboardKpisAsync(DateTime start, DateTime end)
     {
-        _logger.LogInformation("KPI calculation started for period {Start:yyyy-MM-dd} → {End:yyyy-MM-dd}", start, end);
 
         var products = await _repo.GetFinishedProductsAsync(start, end);
         var materials = await _repo.GetAllMaterialsAsync();
         var machines = await _repo.GetAllMachinesAsync();
         var downtimes = await _repo.GetDowntimesAsync(start, end);
-
-        if (products.Count == 0) _logger.LogWarning("No finished products found for this period. Production KPIs will be zero.");
-        if (materials.Count == 0) _logger.LogWarning("No materials found in the system. Consumption KPI will be zero.");
-        if (machines.Count == 0) _logger.LogWarning("No machines found in the system. OEE calculations will be zero.");
-        if (downtimes.Count == 0) _logger.LogInformation("No machine downtimes recorded in this period — full availability assumed.");
 
         double operatingMinutes = CalculateOperatingMinutes(machines, downtimes, start, end);
         double availability = CalculateAvailability(machines, operatingMinutes);
@@ -44,9 +36,6 @@ public class DashboardService : IDashboardService
         double quality = CalculateQuality(products);
         double oee = Math.Round(availability * performance * quality / 10_000, 2);
 
-        _logger.LogInformation(
-            "KPI calculation completed — OEE: {OEE}%, Production: {Count} units, Availability: {Avail}%, Performance: {Perf}%, Quality: {Quality}%",
-            oee, products.Count, availability, performance, quality);
 
         return new DashboardKpiDto(
             TotalProduction: products.Count,

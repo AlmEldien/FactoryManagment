@@ -53,6 +53,9 @@ namespace FactoryManagment.Infrastructure
 
             services.AddScoped<IAuthService, AuthService>();
 
+            // Add for dashboard-production-kpis
+            services.AddScoped<IProductionRepository, ProductionRepository>();
+
             services.AddValidatorsFromAssembly(typeof(ApplicationLayerAssembly).Assembly);
 
             // Add Authentication

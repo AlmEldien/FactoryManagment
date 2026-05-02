@@ -1,6 +1,6 @@
 ﻿using FactoryManagment.Application.DTOs;
 
-namespace FactoryManagment.Application.Interfaces;
+namespace FactoryManagment.Application.Abstractions.Services;
 
 public interface IDashboardService
 {

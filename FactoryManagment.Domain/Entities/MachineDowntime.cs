@@ -16,38 +16,6 @@ public class MachineDowntime
     public Machine Machine   { get; private set; } = null!;
 
 
-    private MachineDowntime() { }
-    private MachineDowntime(Guid machineId, DowntimeReason reason, DateTime startedAt)
-    {
-        Id        = Guid.NewGuid();
-        MachineId = machineId;
-        Reason    = reason;
-        StartedAt = startedAt;
-    }
-
-
-    /// <summary>Starts a new downtime record for the specified machine.</summary>
-    /// <param name="machineId">The ID of the machine that went down.</param>
-    /// <param name="reason">The enum reason for the downtime.</param>
-    public static MachineDowntime Begin(Guid machineId, DowntimeReason reason)
-    {
-        if (machineId == Guid.Empty)
-            throw new ArgumentException("Machine id is required!", nameof(machineId));
-
-        return new MachineDowntime(machineId, reason, DateTime.UtcNow);
-    }
-
-    /// <summary>
-    /// Marks this downtime as ended. Throws if already ended.
-    /// </summary>
-    public void End()
-    {
-        if (EndedAt.HasValue)
-            throw new InvalidOperationException("This downtime is already ended!");
-
-        EndedAt = DateTime.UtcNow;
-    }
-
     /// <summary>
     /// Calculates the actual downtime minutes that overlap with the given period.
     /// Handles cases where downtime started before or extends beyond the period.

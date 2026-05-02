@@ -1,6 +1,6 @@
 ﻿using FactoryManagment.Domain.Entities;
 
-namespace FactoryManagment.Application.Interfaces;
+namespace FactoryManagment.Application.Abstractions.Repositories;
 
 // This one interface contains operations on 4 tables instead of creating four separate interfaces
 // and injecting them into "DashboardService.cs", one specified is better

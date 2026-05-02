@@ -1,6 +1,6 @@
 ﻿using FactoryManagment.Api.Common;
+using FactoryManagment.Application.Abstractions.Services;
 using FactoryManagment.Application.DTOs;
-using FactoryManagment.Application.Interfaces;
 using FactoryManagment.Application.Requests;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;

@@ -1,5 +1,4 @@
 ﻿using FactoryManagment.Domain.Entities;
-using FactoryManagment.Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -13,8 +12,8 @@ internal class ProductConfiguration : IEntityTypeConfiguration<Product>
         builder.HasKey(p => p.Id);
 
         // ValueObjects are stored as plain strings via HasConversion
-        builder.Property(p => p.Name).IsRequired().HasConversion(name => name.Value, value => new EntityName(value)).HasMaxLength(200);
-        builder.Property(p => p.Description).IsRequired().HasConversion(description => description.Value, value => new EntityDescription(value)).HasMaxLength(1000);
+        builder.Property(p => p.Name).IsRequired().HasMaxLength(200);
+        builder.Property(p => p.Description).IsRequired().HasMaxLength(1000);
 
         // Enum are stored as string for readability in the DB
         builder.Property(p => p.Status).HasConversion<string>().HasMaxLength(50);
